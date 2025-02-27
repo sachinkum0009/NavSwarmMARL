@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'laserscan_filter_node = nav_swarm_marl.laserscan_filter_node:main',
+            'task_allocator_node = nav_swarm_marl.task_allocator_node:main',
         ],
     },
 )
