@@ -41,6 +41,8 @@ class DecentralizedMATA(object):
         selected_robot_id = -1
 
         for robot in robots:
+            if robot.status:
+                continue
             distance = robot.get_distance_to(task.position)
             if distance < min_distance:
                 min_distance = distance
