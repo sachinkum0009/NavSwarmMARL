@@ -59,11 +59,11 @@ class TaskAllocatorNode(Node):
         self.robot2.position = (msg.pose.pose.position.x, msg.pose.pose.position.y) 
     
     def task_done_cb(self, msg: String):
-        if msg.data == "tb3_0":
+        if msg.data == "/tb3_0":
             self.robot0.status = False
-        elif msg.data == "tb3_1":
+        elif msg.data == "/tb3_1":
             self.robot1.status = False
-        elif msg.data == "tb3_2":
+        elif msg.data == "/tb3_2":
             self.robot2.status = False
 
     def pose_callback(self, msg: PoseStamped):
