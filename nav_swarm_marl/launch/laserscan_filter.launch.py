@@ -7,6 +7,7 @@ def generate_launch_description():
         executable='laserscan_filter_node',
         name='laserscan_filter_node',
         output='screen',
+        arguments=['--ros-args', '--log-level', 'WARN'],
         # parameters=[{
         #     'scan_topic': '/scan_in',
         #     'filtered_scan_topic': '/scan_out'
