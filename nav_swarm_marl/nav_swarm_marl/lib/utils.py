@@ -110,4 +110,4 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     # filtered_scan.intensities = selected_intensities
     
     # print("Published filtered LaserScan with {} rays".format(len(filtered_scan.ranges)))
-    return filtered_scan
+    return filtered_scan[filtered_scan > 0.0]
