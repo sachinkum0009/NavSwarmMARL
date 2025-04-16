@@ -21,8 +21,6 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     # Select 61 rays evenly spaced from these 180 rays
     selected_indices = np.linspace(0, len(mid_ranges) - 1, 61, dtype=int)
     filtered_ranges = mid_ranges[selected_indices]
-    print("size of filtered_ranges: ", len(filtered_ranges))
-
     # Compute new angle_min and angle_max correctly (270° to 90°)
     new_angle_min = -1.571  # Fixed for 270° to 90°
     new_angle_max = 1.571
@@ -39,7 +37,6 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     filtered_scan.range_max = input.range_max
     filtered_scan.ranges = np.where(filtered_ranges > 0.0, filtered_ranges, float('inf')).tolist()
 
-    print("size of filtered_ranges: ", len(filtered_scan.ranges))
     # filtered_scan.intensities = [input.intensities[start_index + i] for i in selected_indices] if input.intensities else []
 
 
