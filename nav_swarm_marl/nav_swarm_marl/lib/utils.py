@@ -37,7 +37,7 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     filtered_scan.scan_time = input.scan_time
     filtered_scan.range_min = input.range_min
     filtered_scan.range_max = input.range_max
-    filtered_scan.ranges = filtered_ranges[filtered_ranges > 0.0].tolist()
+    filtered_scan.ranges = np.where(filtered_ranges > 0.0, filtered_ranges, float('inf')).tolist()
 
     print("size of filtered_ranges: ", len(filtered_scan.ranges))
     # filtered_scan.intensities = [input.intensities[start_index + i] for i in selected_indices] if input.intensities else []
