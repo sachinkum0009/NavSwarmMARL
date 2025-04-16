@@ -37,7 +37,7 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     filtered_scan.scan_time = input.scan_time
     filtered_scan.range_min = input.range_min
     filtered_scan.range_max = input.range_max
-    filtered_scan.ranges = filtered_ranges
+    filtered_scan.ranges = filtered_ranges[filtered_ranges > 0.0]
     # filtered_scan.intensities = [input.intensities[start_index + i] for i in selected_indices] if input.intensities else []
 
 
@@ -110,4 +110,4 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     # filtered_scan.intensities = selected_intensities
     
     # print("Published filtered LaserScan with {} rays".format(len(filtered_scan.ranges)))
-    return filtered_scan[filtered_scan > 0.0]
+    return filtered_scan
