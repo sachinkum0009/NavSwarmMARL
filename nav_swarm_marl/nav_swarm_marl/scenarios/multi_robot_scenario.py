@@ -23,15 +23,11 @@ class MultiRobotScenario(BaseScenario):
         return True
     
     def run_scenario(self) -> bool:
-        # Implement the logic to run the scenario
-        # This is a placeholder implementation
         for scenario in self.scenarios:
             print(f"Running scenario: {scenario.name}")
         return True
     
     def print_report(self) -> None:
-        # Implement the logic to print the report
-        # This is a placeholder implementation
         table_data = []
         for scenario in self.scenarios:
             table_data.append([scenario.name, scenario.points, scenario.reached_points, scenario.total_points, scenario.delay])
