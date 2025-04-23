@@ -39,6 +39,26 @@ import time
 
 
 class ScenarioExecutorNode(Node, MultiRobotScenario):
+    """
+    ScenarioExecutorNode is a ROS 2 node that manages and executes multi-robot scenarios.
+    This node inherits from both `Node` and `MultiRobotScenario` classes. It provides a service
+    to start the execution of predefined scenarios and publishes goal positions for robots.
+    Attributes:
+        srv (Service): A ROS 2 service that listens to `/start_scenario` requests to start the scenario.
+        goal_pub (Publisher): A ROS 2 publisher that publishes `PoseStamped` messages to the `/goal` topic.
+        goal_pose (PoseStamped): A message object used to define and publish goal positions for robots.
+    Methods:
+        __init__(file_path: str):
+            Initializes the ScenarioExecutorNode, sets up the service, publisher, and logger.
+        start_scenario_callback(req: SetBool.Request, res: SetBool.Response) -> SetBool.Response:
+            Callback function for the `/start_scenario` service. Starts the scenario execution
+            and returns a response indicating success or failure.
+        run_scenario() -> bool:
+            Executes the predefined scenarios by iterating through their points and publishing
+            goal positions. Introduces delays if specified in the scenario configuration.
+            Returns True if the scenario was executed successfully, otherwise False.
+    """
+
     def __init__(self, file_path: str):
         Node.__init__(self, "scenario_executor_node")
         MultiRobotScenario.__init__(self, file_path)
