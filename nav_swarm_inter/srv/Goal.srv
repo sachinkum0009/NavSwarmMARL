@@ -1,0 +1,10 @@
+# Request
+string scenario_name
+int32 scenario_id
+float32 x
+float32 y
+float32 theta
+---
+# Response
+bool success
+string message

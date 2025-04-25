@@ -46,6 +46,13 @@ class MultiRobotScenario(BaseScenario):
             print(f"Running scenario: {scenario.name}")
         return True
 
+    def increment_reached_points(self, index: int) -> None:
+        if 0 <= index < len(self.scenarios):
+            self.scenarios[index].reached_points += 1
+        else:
+            print(f"Index {index} is out of range for scenarios list.")
+        
+
     def print_report(self) -> None:
         table_data = []
         for scenario in self.scenarios:

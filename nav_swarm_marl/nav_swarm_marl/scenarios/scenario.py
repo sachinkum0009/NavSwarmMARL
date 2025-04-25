@@ -34,6 +34,14 @@ class BaseScenario(ABC):
         :return: True if the scenario was read successfully, False otherwise
         """
         pass
+
+    @abstractmethod
+    def increment_reached_points(self, index: int) -> None:
+        """
+        Increment the number of reached points
+        :return: None
+        """
+        pass
     
     @abstractmethod
     def run_scenario(self) -> bool:

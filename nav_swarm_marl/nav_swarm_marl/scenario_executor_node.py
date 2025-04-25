@@ -36,6 +36,12 @@ from rclpy.node import Node
 from rclpy.wait_for_message import wait_for_message
 from std_srvs.srv import SetBool
 import time
+from nav_swarm_inter.srv import Goal
+from rclpy import Future
+
+from typing import List, Tuple
+
+TIMEOUT_SCENARIO_EXECUTION = 10.0  # seconds
 
 
 class ScenarioExecutorNode(Node, MultiRobotScenario):
@@ -66,6 +72,8 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
         self.srv = self.create_service(
             SetBool, "/start_scenario", self.start_scenario_callback
         )
+        self.scenario_client = self.create_client(Goal, "/scenario_goal")
+        self.scenario_req = Goal.Request()
         self.goal_pub = self.create_publisher(PoseStamped, "/goal", 10)
         self.goal_pose = PoseStamped()
         self.get_logger().info("Scenario Executor Node initialized.")
@@ -94,17 +102,48 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
         """
         for scenario in self.scenarios:
             self.get_logger().info(f"Running scenario: {scenario.name}")
-            for point in scenario.points:
-                self.goal_pose.pose.position.x = point[0]
-                self.goal_pose.pose.position.y = point[1]
+            scenario_id = 0
+            self.scenario_req.scenario_name = scenario.name
+            future_list: List[Future] = list()
 
-                self.goal_pub.publish(
-                    self.goal_pose
-                )  # replace this call with service call
+            for point in scenario.points:
+                self.scenario_req.scenario_id = scenario_id
+                self.scenario_req.x = point[0]
+                self.scenario_req.y = point[1]
+                self.scenario_req.theta = 0.0
+
+                future = self.scenario_client.call_async(self.scenario_req)
+                future_list.append(future)
+                # scenario_id += 1
+                self.get_logger().info(
+                    f"Sending goal to scenario client: {point[0]}, {point[1]}"
+                )
                 if scenario.delay:
                     time.sleep(
                         scenario.delay
                     )  # Simulate some delay for the robot to reach the point
+
+            # Wait for all futures to complete
+            for future in future_list:
+                rclpy.spin_until_future_complete(
+                    self, future, timeout_sec=TIMEOUT_SCENARIO_EXECUTION
+                )
+                if future.result() is None or future.done() is False:
+                    self.get_logger().error("Service call failed.")
+                    return False
+                else:
+                    result = future.result()
+                    if result is None:
+                        self.get_logger().error("Service call returned None.")
+                        return False
+                    response: Goal.Response = result
+                    self.get_logger().info(
+                        f"Scenario response: {response.success}, {response.message}"
+                    )
+                    if response.success is True:
+                        self.increment_reached_points(scenario_id)
+            
+            scenario_id += 1
 
         self.get_logger().info("Scenario completed.")
         return True
