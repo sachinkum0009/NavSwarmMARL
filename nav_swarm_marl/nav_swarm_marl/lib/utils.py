@@ -1,12 +1,20 @@
 from sensor_msgs.msg import LaserScan
 import numpy as np
+from enum import Enum
+from rclpy.node import Client
+from rclpy.node import Node
 
-def filter_laserscan(input: LaserScan) -> LaserScan:
+class RobotID(Enum):
+    ROBOT_0 = 0
+    ROBOT_1 = 1
+    ROBOT_2 = 2
+
+def filter_laserscan(input: LaserScan) -> LaserScan | None:
     total_rays = len(input.ranges)
 
     if total_rays == 0:
         # self.get_logger().warn("Received empty LaserScan data")
-        return
+        return None
 
     # Compute correct indices for 270° to 90° range
     start_index = (3 * total_rays) // 4  # 270 degrees
@@ -110,3 +118,10 @@ def filter_laserscan(input: LaserScan) -> LaserScan:
     
     # print("Published filtered LaserScan with {} rays".format(len(filtered_scan.ranges)))
     return filtered_scan
+
+def wait_for_service(node: Node, client: Client):
+    """
+    func to wait for service
+    """
+    while not client.wait_for_service(timeout_sec=1.0):
+        node.get_logger().info(f"Waiting for {client.srv_name} service...")

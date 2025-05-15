@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'laserscan_filter_node = nav_swarm_marl.laserscan_filter_node:main',
             'task_allocator_node = nav_swarm_marl.task_allocator_node:main',
+            'scenario_executor_node = nav_swarm_marl.scenario_executor_node:main',
         ],
     },
 )

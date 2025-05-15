@@ -23,6 +23,20 @@ from typing import List
 
 
 class DecentralizedMATA(object):
+    """
+    DecentralizedMATA is a class that implements a decentralized multi-agent task allocation (MATA) strategy. 
+    It is designed to allocate tasks to robots in a distributed manner based on certain criteria, such as 
+    minimizing the distance between a robot and a task.
+    Methods:
+        __init__():
+            Initializes the DecentralizedMATA object.
+        allocate_tasks(robots: List[Robot], task: Task) -> int:
+            Allocates a task to the most suitable robot based on proximity and availability.
+                robots (List[Robot]): A list of Robot objects representing the available robots.
+                task (Task): A Task object representing the task to be allocated.
+                int: The ID of the robot to which the task is allocated. Returns -1 if no suitable robot is found.
+    """
+
     def __init__(self):
         pass
 

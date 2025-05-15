@@ -33,13 +33,14 @@ import rclpy
 from geometry_msgs.msg import PoseStamped
 from nav_swarm_marl.scenarios.multi_robot_scenario import MultiRobotScenario
 from rclpy.node import Node
-from rclpy.wait_for_message import wait_for_message
 from std_srvs.srv import SetBool
 import time
 from nav_swarm_inter.srv import Goal
 from rclpy import Future
-
+from nav_swarm_marl.lib.utils import wait_for_service
 from typing import List, Tuple
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import ReentrantCallbackGroup
 
 TIMEOUT_SCENARIO_EXECUTION = 10.0  # seconds
 
@@ -73,10 +74,29 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
             SetBool, "/start_scenario", self.start_scenario_callback
         )
         self.scenario_client = self.create_client(Goal, "/scenario_goal")
+        wait_for_service(self, self.scenario_client)
         self.scenario_req = Goal.Request()
         self.goal_pub = self.create_publisher(PoseStamped, "/goal", 10)
         self.goal_pose = PoseStamped()
         self.get_logger().info("Scenario Executor Node initialized.")
+        self.start_scenario_callback(SetBool.Request(), SetBool.Response())
+
+    def send_goal_request(self):
+        request = Goal.Request()
+        # Fill in request fields as needed, e.g.:
+        # request.target = ...
+        request.x = 1.0
+        request.scenario_id = 3
+        future = self.scenario_client.call_async(request)
+        # rclpy.spin_until_future_complete(
+        #     self, future, timeout_sec=2.0
+        # )
+        rclpy.spin_until_future_complete(self, future, timeout_sec=2.0)
+        response = future.result()
+        if response is None:
+            self.get_logger().error("Service call returned None.")
+            return False
+        self.get_logger().info(f"Response: {response}")
 
     def start_scenario_callback(
         self, req: SetBool.Request, res: SetBool.Response
@@ -100,21 +120,25 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
         Run the scenario
         :return: True if the scenario was run successfully, False otherwise
         """
+        scenario_id = 0
         for scenario in self.scenarios:
+            self.scenario_req = Goal.Request()
             self.get_logger().info(f"Running scenario: {scenario.name}")
-            scenario_id = 0
             self.scenario_req.scenario_name = scenario.name
             future_list: List[Future] = list()
 
             for point in scenario.points:
                 self.scenario_req.scenario_id = scenario_id
-                self.scenario_req.x = point[0]
-                self.scenario_req.y = point[1]
+                self.scenario_req.x = float(point[0])
+                self.scenario_req.y = float(point[1])
                 self.scenario_req.theta = 0.0
 
+                if self.scenario_client.service_is_ready():
+                    self.get_logger().info("Scenario client is ready")
+                else:
+                    self.get_logger().error("Scenario client is not ready")
                 future = self.scenario_client.call_async(self.scenario_req)
                 future_list.append(future)
-                # scenario_id += 1
                 self.get_logger().info(
                     f"Sending goal to scenario client: {point[0]}, {point[1]}"
                 )
@@ -128,6 +152,7 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
                 rclpy.spin_until_future_complete(
                     self, future, timeout_sec=TIMEOUT_SCENARIO_EXECUTION
                 )
+                self.get_logger().info(f"future result: {future.result()}")
                 if future.result() is None or future.done() is False:
                     self.get_logger().error("Service call failed.")
                     return False
@@ -142,7 +167,7 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
                     )
                     if response.success is True:
                         self.increment_reached_points(scenario_id)
-            
+
             scenario_id += 1
 
         self.get_logger().info("Scenario completed.")
@@ -151,11 +176,14 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
 
 def main(args=None):
     rclpy.init(args=args)
-    file_path = (
-        "path/to/scenario.yaml"  # Replace with the actual path to your scenario file
+    file_path: str = (
+        "/media/asus/backup/zzzzz/ros2/rtw_workspaces/humble_ws/src/NavSwarmMARL/nav_swarm_marl/nav_swarm_marl/scenarios/multi_robot_scenario.yaml"
     )
+    # executor = MultiThreadedExecutor()
     node = ScenarioExecutorNode(file_path)
-    rclpy.spin(node)
+    # executor.add_node(node)
+    # executor.spin()
+    # rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
 

@@ -3,7 +3,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 import yaml
 
-from scenario import BaseScenario, Scenario
+from nav_swarm_marl.scenarios.scenario import BaseScenario, Scenario
 from tabulate import tabulate
 
 
@@ -51,7 +51,6 @@ class MultiRobotScenario(BaseScenario):
             self.scenarios[index].reached_points += 1
         else:
             print(f"Index {index} is out of range for scenarios list.")
-        
 
     def print_report(self) -> None:
         table_data = []
@@ -66,6 +65,6 @@ class MultiRobotScenario(BaseScenario):
                 ]
             )
 
-        headers = ["Scenario Name", "Points", "Reached Points", "Total Points, Delay"]
+        headers = ["Scenario Name", "Points", "Reached Points", "Total Points", "Delay"]
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
         print("Report printed successfully.")
