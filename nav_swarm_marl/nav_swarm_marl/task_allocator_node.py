@@ -29,6 +29,7 @@ from nav_swarm_marl.lib.utils import wait_for_service
 from nav_swarm_marl.datatypes.robot import Robot
 from nav_swarm_marl.datatypes.task import Task
 from nav_swarm_marl.lib.utils import RobotID, wait_for_service
+from NavSwarmMARL.nav_swarm_marl.nav_swarm_marl.scenarios.distance_calculator import DistanceCalculator
 from std_msgs.msg import String
 
 from nav_swarm_inter.srv import Goal
@@ -44,6 +45,8 @@ class TaskAllocatorNode(Node):
         self.robot0_odom = Odometry()
         self.robot1_odom = Odometry()
         self.robot2_odom = Odometry()
+
+        self.distance_calculator = DistanceCalculator(3)
 
         reentrant_callback_group = ReentrantCallbackGroup()
 
@@ -84,22 +87,23 @@ class TaskAllocatorNode(Node):
         self.task_allocator = DecentralizedMATA()
         self.get_logger().info("The task allocator node has just been created")
 
-
-
     def initialize_robots(self):
         self.robot0 = Robot(0, (0, 0), False)
         self.robot1 = Robot(1, (0, 0), False)
-        self.robot2 = Robot(2, (0, 0), False)
+        self.robot2 = Robot(2, (0, 0), True)
         self.get_logger().info("Robots initialized")
 
     def robot0_odom_callback(self, msg: Odometry):
         self.robot0.position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+        self.distance_calculator.update_distance(0, msg.pose.pose.position.x, msg.pose.pose.position.y)
 
     def robot1_odom_callback(self, msg: Odometry):
         self.robot1.position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+        self.distance_calculator.update_distance(1, msg.pose.pose.position.x, msg.pose.pose.position.y)
 
     def robot2_odom_callback(self, msg: Odometry):
         self.robot2.position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+        self.distance_calculator.update_distance(2, msg.pose.pose.position.x, msg.pose.pose.position.y)
 
     def task_done_cb(self, msg: String):
         if msg.data == "/tb3_0":
@@ -115,7 +119,7 @@ class TaskAllocatorNode(Node):
         robot_id = self.task_allocator.allocate_tasks(
             [self.robot0, self.robot1, self.robot2], task
         )
-        self.get_logger().info(f"Task allocated to robot with id: {robot_id}") 
+        self.get_logger().info(f"Task allocated to robot with id: {robot_id}")
         if robot_id == -1:
             self.get_logger().error("No robot is available to handle the task")
             res.success = False
@@ -175,7 +179,7 @@ class TaskAllocatorNode(Node):
         # else:
         #     self.get_logger().info("no robot id found")
         return None
-    
+
     def send_task_xy(self, robot_id: int, x: float, y: float) -> bool | Goal.Response:
         future = Future()
         self.goal_req = Goal.Request()
@@ -222,6 +226,7 @@ class TaskAllocatorNode(Node):
             self.get_logger().error("Failed to get a valid response from the service")
             return False
         response: Goal.Response = result
+        response.distance = self.distance_calculator.get_distance(robot_id)
         print(f"Received response: {response}")
         return response
 

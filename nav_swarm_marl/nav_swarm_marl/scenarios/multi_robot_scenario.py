@@ -29,6 +29,14 @@ class MultiRobotScenario(BaseScenario):
     def __init__(self, file_path):
         super().__init__(file_path=file_path)
 
+    def update_distance(self, index: int, distance: float) -> bool:
+        try:
+            self.scenarios[index].distance_covered.append(distance)
+        except Exception as e:
+            print(f"Error while appending the distance to the list: {e}")
+            return False
+        return True
+
     def read_scenario(self, file_path: str) -> bool:
         self.scenarios = []
         try:
@@ -62,9 +70,17 @@ class MultiRobotScenario(BaseScenario):
                     scenario.reached_points,
                     scenario.total_points,
                     scenario.delay,
+                    scenario.distance_covered,
                 ]
             )
 
-        headers = ["Scenario Name", "Points", "Reached Points", "Total Points", "Delay"]
+        headers = [
+            "Scenario Name",
+            "Points",
+            "Reached Points",
+            "Total Points",
+            "Delay",
+            "Distance Covered",
+        ]
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
         print("Report printed successfully.")
