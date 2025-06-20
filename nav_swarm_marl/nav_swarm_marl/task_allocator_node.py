@@ -29,7 +29,7 @@ from nav_swarm_marl.lib.utils import wait_for_service
 from nav_swarm_marl.datatypes.robot import Robot
 from nav_swarm_marl.datatypes.task import Task
 from nav_swarm_marl.lib.utils import RobotID, wait_for_service
-from NavSwarmMARL.nav_swarm_marl.nav_swarm_marl.scenarios.distance_calculator import DistanceCalculator
+from nav_swarm_marl.scenarios.distance_calculator import DistanceCalculator
 from std_msgs.msg import String
 
 from nav_swarm_inter.srv import Goal
@@ -96,6 +96,9 @@ class TaskAllocatorNode(Node):
     def robot0_odom_callback(self, msg: Odometry):
         self.robot0.position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
         self.distance_calculator.update_distance(0, msg.pose.pose.position.x, msg.pose.pose.position.y)
+        # self.get_logger().info(f"updating the distance x: {self.distance_calculator.prev_x[0]}")
+        # self.get_logger().info(f"updating the distance y: {self.distance_calculator.prev_y[0]}")
+        # self.get_logger().info(f"distance travelled : {self.distance_calculator.distances[0]}")
 
     def robot1_odom_callback(self, msg: Odometry):
         self.robot1.position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
@@ -130,6 +133,10 @@ class TaskAllocatorNode(Node):
         elif isinstance(result, Goal.Response):
             res.success = result.success
             res.message = result.message
+            res.distance = self.distance_calculator.get_distance(robot_id)
+            self.distance_calculator.reset_distance(robot_id)
+        
+            self.get_logger().info(f"distance covered by robot {robot_id}: {res.distance}")
         return res
 
     def pose_callback(self, msg: PoseStamped):
@@ -226,7 +233,7 @@ class TaskAllocatorNode(Node):
             self.get_logger().error("Failed to get a valid response from the service")
             return False
         response: Goal.Response = result
-        response.distance = self.distance_calculator.get_distance(robot_id)
+        
         print(f"Received response: {response}")
         return response
 

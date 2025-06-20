@@ -27,6 +27,8 @@ setup(
             'laserscan_filter_node = nav_swarm_marl.laserscan_filter_node:main',
             'task_allocator_node = nav_swarm_marl.task_allocator_node:main',
             'scenario_executor_node = nav_swarm_marl.scenario_executor_node:main',
+            'navigation_server_node = nav_swarm_marl.navigation_server:main',
+            'cmd_vel2stamp_node = nav_swarm_marl.cmd_vel2stamp_node:main',
         ],
     },
 )
