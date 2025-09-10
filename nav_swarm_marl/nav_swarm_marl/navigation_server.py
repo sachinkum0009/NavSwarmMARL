@@ -47,13 +47,19 @@ class NavigationServer(Node):
 
         if result == TaskResult.SUCCEEDED:
             self.get_logger().info("goal succeeded")
-
+            res.success = True
+            res.message = "Goal succeeded"
         elif result == TaskResult.CANCELED:
             self.get_logger().info("goal canceled")
-
+            res.success = False
+            res.message = "Goal canceled"
         elif result == TaskResult.FAILED:
             self.get_logger().info("goal failed")
-
+            res.success = False
+            res.message = "Goal failed"
+        else:
+            res.success = False
+            res.message = "Unknown result"
         return res
 
 
