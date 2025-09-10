@@ -7,7 +7,6 @@ This script demonstrates how to use the PidParams, PidController, and
 TwistPidController classes for cmd_vel command generation.
 """
 
-import time
 from .pid_controller import PidParams, PidController, TwistPidController
 
 
@@ -101,8 +100,8 @@ def demonstrate_twist_pid():
               f"{twist_cmd.linear.x:.3f}\t\t{twist_cmd.angular.z:.3f}")
         
         # Stop when close enough to targets
-        if (abs(current_linear - target_linear) < 0.01 and 
-            abs(current_angular - target_angular) < 0.01):
+        if (abs(current_linear - target_linear) < 0.01 and
+                abs(current_angular - target_angular) < 0.01):
             break
     
     print(f"Final velocities: linear={current_linear:.3f} m/s, "
