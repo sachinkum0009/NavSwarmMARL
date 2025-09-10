@@ -1,7 +1,6 @@
 # NavSwarmMARL
 Multi Agent Reinforcement Learning based Navigation for Swarm of Robots
 
-=======
 ## Description
 
 This package contains the code for running navigation for swarm of robots using Multi-Agent Reinforcement Learning (MARL). The system enables multiple TurtleBot3 robots to navigate collaboratively in hospital environments using trained RL agents for intelligent task allocation and collision-free navigation.
