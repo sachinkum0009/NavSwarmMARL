@@ -60,25 +60,25 @@ class TaskAllocatorNode(Node):
             self.scenario_server_cb,
             callback_group=reentrant_callback_group,
         )
-        self.tb3_0_task_client = self.create_client(Goal, "/tb3_0/task_server")
-        self.tb3_1_task_client = self.create_client(Goal, "/tb3_1/task_server")
-        self.tb3_2_task_client = self.create_client(Goal, "/tb3_2/task_server")
+        self.tb3_0_task_client = self.create_client(Goal, "/tb0/task_server")
+        self.tb3_1_task_client = self.create_client(Goal, "/tb1/task_server")
+        self.tb3_2_task_client = self.create_client(Goal, "/tb2/task_server")
         wait_for_service(self, self.tb3_0_task_client)
         wait_for_service(self, self.tb3_1_task_client)
         wait_for_service(self, self.tb3_2_task_client)
         self.goal_req = Goal.Request()
         self.task_pub = self.create_publisher(PoseStamped, "/task", 10)
-        self.robot0_pose_pub = self.create_publisher(PoseStamped, "/tb3_0/pose", 10)
-        self.robot1_pose_pub = self.create_publisher(PoseStamped, "/tb3_1/pose", 10)
-        self.robot2_pose_pub = self.create_publisher(PoseStamped, "/tb3_2/pose", 10)
+        self.robot0_pose_pub = self.create_publisher(PoseStamped, "/tb0/pose", 10)
+        self.robot1_pose_pub = self.create_publisher(PoseStamped, "/tb1/pose", 10)
+        self.robot2_pose_pub = self.create_publisher(PoseStamped, "/tb2/pose", 10)
         self.robot0_odom_sub = self.create_subscription(
-            Odometry, "/tb3_0/odom", self.robot0_odom_callback, 10
+            Odometry, "/tb0/odom", self.robot0_odom_callback, 10
         )
         self.robot1_odom_sub = self.create_subscription(
-            Odometry, "/tb3_1/odom", self.robot1_odom_callback, 10
+            Odometry, "/tb1/odom", self.robot1_odom_callback, 10
         )
         self.robot2_odom_sub = self.create_subscription(
-            Odometry, "/tb3_2/odom", self.robot2_odom_callback, 10
+            Odometry, "/tb2/odom", self.robot2_odom_callback, 10
         )
         self.task_done_sub = self.create_subscription(
             String, "/success", self.task_done_cb, 10
@@ -90,7 +90,7 @@ class TaskAllocatorNode(Node):
     def initialize_robots(self):
         self.robot0 = Robot(0, (0, 0), False)
         self.robot1 = Robot(1, (0, 0), False)
-        self.robot2 = Robot(2, (0, 0), True)
+        self.robot2 = Robot(2, (0, 0), False)
         self.get_logger().info("Robots initialized")
 
     def robot0_odom_callback(self, msg: Odometry):
@@ -109,11 +109,11 @@ class TaskAllocatorNode(Node):
         self.distance_calculator.update_distance(2, msg.pose.pose.position.x, msg.pose.pose.position.y)
 
     def task_done_cb(self, msg: String):
-        if msg.data == "/tb3_0":
+        if msg.data == "/tb0":
             self.robot0.status = False
-        elif msg.data == "/tb3_1":
+        elif msg.data == "/tb1":
             self.robot1.status = False
-        elif msg.data == "/tb3_2":
+        elif msg.data == "/tb2":
             self.robot2.status = False
 
     def scenario_server_cb(self, req: Goal.Request, res: Goal.Response):
@@ -130,11 +130,13 @@ class TaskAllocatorNode(Node):
         result = self.send_task_xy(robot_id, req.x, req.y)
         if isinstance(result, bool):
             res.success = False
+            self.get_logger().error("Failed to reach target goal")
         elif isinstance(result, Goal.Response):
             res.success = result.success
             res.message = result.message
             res.distance = self.distance_calculator.get_distance(robot_id)
             self.distance_calculator.reset_distance(robot_id)
+            self.get_logger().info(f"changed distance to {self.distance_calculator.get_distance(robot_id)} for robot {robot_id}")
         
             self.get_logger().info(f"distance covered by robot {robot_id}: {res.distance}")
         return res
@@ -197,8 +199,9 @@ class TaskAllocatorNode(Node):
         if robot_id == 0:
             self.robot0.status = True
             if self.tb3_0_task_client.service_is_ready():
-                self.get_logger().info("tb3_0 task client is ready")
+                self.get_logger().info("tb0 task client is ready")
                 response = self.tb3_0_task_client.call(self.goal_req)
+                self.get_logger().info(f"response is {response}")
                 self.robot0.status = False
                 return response
                 # future = self.tb3_0_task_client.call_async(self.goal_req)
@@ -208,8 +211,9 @@ class TaskAllocatorNode(Node):
         elif robot_id == 1:
             self.robot1.status = True
             if self.tb3_1_task_client.service_is_ready():
-                self.get_logger().info("tb3_1 task client is ready")
+                self.get_logger().info("tb1 task client is ready")
                 response = self.tb3_1_task_client.call(self.goal_req)
+                self.get_logger().info(f"response is {response}")
                 self.robot1.status = False
                 return response
                 # future = self.tb3_1_task_client.call_async(self.goal_req)
@@ -219,8 +223,9 @@ class TaskAllocatorNode(Node):
         elif robot_id == 2:
             self.robot2.status = True
             if self.tb3_2_task_client.service_is_ready():
-                self.get_logger().info("tb3_2 task client is ready")
+                self.get_logger().info("tb2 task client is ready")
                 response = self.tb3_2_task_client.call(self.goal_req)
+                self.get_logger().info(f"response is {response}")
                 self.robot2.status = False
                 return response
                 # future = self.tb3_2_task_client.call_async(self.goal_req)

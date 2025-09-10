@@ -55,8 +55,8 @@ def generate_launch_description():
     
     ld = LaunchDescription()
     
-    ld.add_action(gazebo_launch_action)
-    ld.add_action(tb3_spawn_launch_action)
+    # ld.add_action(gazebo_launch_action)
+    # ld.add_action(tb3_spawn_launch_action)
     ld.add_action(static_tfs_launch_action)
     ld.add_action(rl_inference_launch_action)
     ld.add_action(task_allocator_node)

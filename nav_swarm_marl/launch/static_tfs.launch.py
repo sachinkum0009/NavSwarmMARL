@@ -8,22 +8,22 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='map_to_odom_static_tf_tb3_0',
+            name='map_to_odom_static_tf_tb0',
             output='screen',
-            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb3_0/odom']
+            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb0/odom']
         ),
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='map_to_odom_static_tf_tb3_1',
+            name='map_to_odom_static_tf_tb1',
             output='screen',
-            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb3_1/odom']
+            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb1/odom']
         ),
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='map_to_odom_static_tf_tb3_2',
+            name='map_to_odom_static_tf_tb2',
             output='screen',
-            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb3_2/odom']
+            arguments=['0', '0', '0.01', '0', '0', '0', 'map', 'tb2/odom']
         ),
     ])

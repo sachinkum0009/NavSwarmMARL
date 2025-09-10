@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from geometry_msgs.msg import PoseStamped
+from nav2_msgs.action import NavigateToPose
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from nav_swarm_inter.srv import Goal
 import rclpy
@@ -9,6 +10,7 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 
+FEEDBACK_TIMEOUT = 600
 
 class NavigationServer(Node):
     def __init__(self):
@@ -39,16 +41,17 @@ class NavigationServer(Node):
 
         go_to_task = self.navigator.goToPose(goal_pose)
         while not self.navigator.isTaskComplete():
-            feedback = self.navigator.getFeedback()
-            if feedback.navigation_duration > 600:
-                self.navigator.cancelTask()
+            feedback: NavigateToPose.Feedback = self.navigator.getFeedback()
+            # if feedback.navigation_time.to_msg() > FEEDBACK_TIMEOUT:
+            #     self.navigator.cancelTask()
 
         result = self.navigator.getResult()
 
         if result == TaskResult.SUCCEEDED:
             self.get_logger().info("goal succeeded")
             res.success = True
-            res.message = "Goal succeeded"
+
+
         elif result == TaskResult.CANCELED:
             self.get_logger().info("goal canceled")
             res.success = False

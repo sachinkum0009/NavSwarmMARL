@@ -9,10 +9,10 @@ from abc import ABC, abstractmethod
 class Scenario:
     name: str
     points: List[Tuple[float, float]]
-    distance_covered: List[float]
     reached_points: int = 0
     total_points: int = 0
     delay: Optional[float] = None
+    distance_covered: List[float] = field(default_factory=list)
 
     def __post_init__(self):
         self.total_points = len(self.points)

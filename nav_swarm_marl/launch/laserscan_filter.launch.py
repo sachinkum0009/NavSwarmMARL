@@ -7,7 +7,7 @@ def generate_launch_description():
         executable='laserscan_filter_node',
         name='laserscan_filter_node',
         output='screen',
-        namespace='tb3_0',
+        namespace='tb0',
         arguments=['--ros-args', '--log-level', 'WARN'],
         remappings=[
             ('scan_in', 'scan'),
@@ -19,7 +19,7 @@ def generate_launch_description():
         executable='laserscan_filter_node',
         name='laserscan_filter_node',
         output='screen',
-        namespace='tb3_1',
+        namespace='tb1',
         arguments=['--ros-args', '--log-level', 'WARN'],
         remappings=[
             ('scan_in', 'scan'),
@@ -31,7 +31,7 @@ def generate_launch_description():
         executable='laserscan_filter_node',
         name='laserscan_filter_node',
         output='screen',
-        namespace='tb3_2',
+        namespace='tb2',
         arguments=['--ros-args', '--log-level', 'WARN'],
         remappings=[
             ('scan_in', 'scan'),

@@ -42,7 +42,7 @@ from typing import List, Tuple
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
-TIMEOUT_SCENARIO_EXECUTION = 20.0  # seconds
+TIMEOUT_SCENARIO_EXECUTION = 60.0  # seconds
 
 
 class ScenarioExecutorNode(Node, MultiRobotScenario):
@@ -165,9 +165,10 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
                     self.get_logger().info(
                         f"Scenario response: {response.success}, {response.message}"
                     )
-                    if response.success is True:
+                    if response.success is True: # TODO: I want to store the goal distance even if the target is not reached
                         self.increment_reached_points(scenario_id)
-                        self.update_distance(scenario_id, response.distance)
+
+                    self.update_distance(scenario_id, response.distance)
 
             scenario_id += 1
 
