@@ -12,11 +12,11 @@ class LaserScanFilter(Node):
         
         self.subscription = self.create_subscription(
             LaserScan,
-            '/scan_in',
+            'scan_in',
             self.scan_callback,
             qos_profile
         )
-        self.publisher = self.create_publisher(LaserScan, '/scan_out', qos_profile)
+        self.publisher = self.create_publisher(LaserScan, 'scan_out', qos_profile)
     
     def scan_callback(self, msg: LaserScan):
         filtered_scan = filter_laserscan(msg)

@@ -42,7 +42,7 @@ from typing import List, Tuple
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
-TIMEOUT_SCENARIO_EXECUTION = 10.0  # seconds
+TIMEOUT_SCENARIO_EXECUTION = 60.0  # seconds
 
 
 class ScenarioExecutorNode(Node, MultiRobotScenario):
@@ -155,18 +155,20 @@ class ScenarioExecutorNode(Node, MultiRobotScenario):
                 self.get_logger().info(f"future result: {future.result()}")
                 if future.result() is None or future.done() is False:
                     self.get_logger().error("Service call failed.")
-                    return False
+                    # return False
                 else:
                     result = future.result()
-                    if result is None:
-                        self.get_logger().error("Service call returned None.")
-                        return False
+                    # if result is None:
+                    #     self.get_logger().error("Service call returned None.")
+                    #     # return False
                     response: Goal.Response = result
                     self.get_logger().info(
                         f"Scenario response: {response.success}, {response.message}"
                     )
-                    if response.success is True:
+                    if response.success is True: # TODO: I want to store the goal distance even if the target is not reached
                         self.increment_reached_points(scenario_id)
+
+                    self.update_distance(scenario_id, response.distance)
 
             scenario_id += 1
 

@@ -8,3 +8,4 @@ float32 theta
 # Response
 bool success
 string message
+float32 distance

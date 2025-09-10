@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 from abc import ABC, abstractmethod
 
+
 @dataclass
 class Scenario:
     name: str
@@ -11,21 +12,38 @@ class Scenario:
     reached_points: int = 0
     total_points: int = 0
     delay: Optional[float] = None
+    distance_covered: List[float] = field(default_factory=list)
+
     def __post_init__(self):
         self.total_points = len(self.points)
+        # self.distance_covered = [0.0] * len(self.points)
+
 
 class BaseScenario(ABC):
     """
     Base class for scenarios
     """
+
     def __init__(self, file_path: str):
         """
         Initialize the scenario
         """
-        self.scenarios : List[Scenario] = []
+        self.scenarios: List[Scenario] = []
         self.read_scenario(file_path)
-    
-    
+
+    @abstractmethod
+    def update_distance(self, index: int, distance: float) -> bool:
+        """
+        Update the distance covered by a robot at a given
+        index in the list of scenarios
+        :param
+        index: Index of the robot in the list of scenarios
+        distance: Distance covered by the robot at the given index in the list of scenarios
+        :return: True if the distance was updated successfully,
+        False otherwise
+        """
+        pass
+
     @abstractmethod
     def read_scenario(self, file_path: str) -> bool:
         """
@@ -42,7 +60,7 @@ class BaseScenario(ABC):
         :return: None
         """
         pass
-    
+
     @abstractmethod
     def run_scenario(self) -> bool:
         """
@@ -50,7 +68,7 @@ class BaseScenario(ABC):
         :return: True if the scenario was run successfully, False otherwise
         """
         pass
-    
+
     @abstractmethod
     def print_report(self) -> None:
         """
@@ -58,4 +76,3 @@ class BaseScenario(ABC):
         :return: None
         """
         pass
-    
