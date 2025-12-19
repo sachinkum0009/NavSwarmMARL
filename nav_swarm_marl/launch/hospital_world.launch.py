@@ -12,7 +12,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
     world_file_name = 'hospital.world'
-    pkg_dir = get_package_share_directory('hospital_robot_spawner')
+    pkg_dir = get_package_share_directory('turtlebot_rl')
 
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(pkg_dir, 'models')
     #os.environ["GAZEBO_RESOURCE_PATH"] = os.path.join(pkg_dir, 'worlds')
@@ -29,7 +29,7 @@ def generate_launch_description():
     #spawn_entity = Node(package='gazebo_ros', node_executable='spawn_entity.py',
     #                    arguments=['-entity', 'demo', 'x', 'y', 'z'],
     #                    output='screen')
-    spawn_entity = Node(package='hospital_robot_spawner', executable='spawn_demo',
+    spawn_entity = Node(package='turtlebot_rl', executable='spawn_demo',
                         arguments=['HospitalBot', 'demo', '1', '16.0', '0.0'],
                         output='screen')
 

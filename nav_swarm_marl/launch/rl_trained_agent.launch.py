@@ -6,7 +6,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         # Node(
-        #     package='hospital_robot_spawner',
+        #     package='turtlebot_rl',
         #     executable='trained_agent_manual_rviz',
         #     name='trained_agent_tb3_0',
         #     output='screen',
@@ -16,7 +16,7 @@ def generate_launch_description():
         # ),
 
         # Node(
-        #     package='hospital_robot_spawner',
+        #     package='turtlebot_rl',
         #     executable='trained_agent_manual_rviz',
         #     name='trained_agent_tb3_1',
         #     output='screen',
@@ -38,21 +38,21 @@ def generate_launch_description():
         ),
 
         # Node(
-        #     package='hospital_robot_spawner',
+        #     package='turtlebot_rl',
         #     executable='path_publisher',
         #     name='path_publisher_tb3_0',
         #     output='screen',
         #     namespace='tb3_0',
         # ),
         # Node(
-        #     package='hospital_robot_spawner',
+        #     package='turtlebot_rl',
         #     executable='path_publisher',
         #     name='path_publisher_tb3_1',
         #     output='screen',
         #     namespace='tb3_1',
         # ),
         # Node(
-        #     package='hospital_robot_spawner',
+        #     package='turtlebot_rl',
         #     executable='path_publisher',
         #     name='path_publisher_tb3_2',
         #     output='screen',

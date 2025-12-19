@@ -7,7 +7,7 @@ def generate_launch_description():
         executable='laserscan_filter_node',
         name='laserscan_filter_node',
         output='screen',
-        namespace='tb0',
+        # namespace='tb0',
         arguments=['--ros-args', '--log-level', 'WARN'],
         remappings=[
             ('scan_in', 'scan'),
@@ -40,6 +40,6 @@ def generate_launch_description():
     )
     return LaunchDescription([
         tb3_0_laser_filter_node,
-        tb3_1_laser_filter_node,
-        tb3_2_laser_filter_node,
+        # tb3_1_laser_filter_node,
+        # tb3_2_laser_filter_node,
     ])

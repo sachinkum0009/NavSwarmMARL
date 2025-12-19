@@ -76,24 +76,11 @@ ros2 launch turtlebot3_bringup robot.launch.py namespace:=tb1
 
 ros2 launch turtlebot3_bringup robot.launch.py namespace:=tb2
 
+ros2 launch turtlebot3_bringup robot.launch.py namespace:=tb3
 
 ```
 
-## Commands for mapping
-
-```bash
-ros2 launch nav_swarm_marl cartographer.launch.py namespace:=tb2
-
-ros2 run turtlebot3_teleop teleop_keyboard --ros-args -r /cmd_vel:=/tb2/cmd_vel
-
-ros2 launch nav_swarm_marl multi_nav2_bringup.launch.py namespace:=tb2
-
-ros2 run nav2_map_server map_saver_cli -f map --ros-args -r __ns:=/tb2
-```
-
-
-
-## Commands to test on the tb3 with navigation2
+## Commands to test on the tb3 with navigation
 
 ```bash
 ros2 launch nav_swarm_marl navigation_server.launch.py
@@ -119,6 +106,8 @@ ros2 launch nav_swarm_marl laserscan_filter.launch.py
 ros2 run rmw_zenoh_cpp rmw_zenohd
 
 ros2 launch nav_swarm_marl laserscan_filter.launch.py
+
+ros2 launch nav_swarm_marl cmd_vel_smoother.launch.py
 
 ros2 launch nav_swarm_marl rl_inference_server.launch.py
 

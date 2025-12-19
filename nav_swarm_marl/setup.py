@@ -34,6 +34,7 @@ setup(
     entry_points={
         'console_scripts': [
             'laserscan_filter_node = nav_swarm_marl.laserscan_filter_node:main',
+            'cmd_pid_controller_node = nav_swarm_marl.cmd_pid_controller:main',
             'task_allocator_node = nav_swarm_marl.task_allocator_node:main',
             'scenario_executor_node = nav_swarm_marl.scenario_executor_node:main',
             'navigation_server_node = nav_swarm_marl.navigation_server:main',

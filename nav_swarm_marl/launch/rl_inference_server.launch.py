@@ -6,7 +6,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='hospital_robot_spawner',
+            package='turtlebot_rl',
             executable='trained_agent_manual_rviz',
             name='rl_inference_server',
             output='screen',
